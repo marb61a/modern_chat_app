@@ -20,3 +20,11 @@ app.get("/", (req, res) => {
        useExternalStyles 
     });
 });
+
+// Startup
+const port = process.env.PORT || 3000;
+function startServer(){
+    server.listen(port, () => {
+		console.log(`Started http server on ${port}`);
+	});
+}
