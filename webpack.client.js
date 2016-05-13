@@ -13,6 +13,23 @@ const vendorModules = [
 const dirname = path.resolve("./");
 
 function createConfig(isDebug){
+	const devTool = isDebug ? "eval-source-map" : "source-map";
+	const plugins = [new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js")];
+	
+	const cssLoader = {test: /\.css$/, loader: "style!css"};
+	const sassLoader = {test: /\.scss$/, loader: "style!css!sass"};
+	const appEntry = ["./src/client/application.js"];
+	
+	if (!isDebug) {
+		plugins.push(new webpack.optimize.UglifyJsPlugin());
+		plugins.push(new ExtractTextPlugin("[name].css"));
+		
+		cssLoader.loader = ExtractTextPlugin.extract("style", "css");
+		sassLoader.loader = ExtractTextPlugin.extract("style", "css!sass");
+	} else {
+		plugins.push(new webpack.HotModuleReplacementPlugin());
+		appEntry.splice(0, 0, "webpack-hot-middleware/client");
+	}
     
     // Webpack Config
     return{
