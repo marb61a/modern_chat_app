@@ -5,7 +5,16 @@ var path = require("path"),
 const nodeModules = fs.readdirSync("./node_modules").filter(d => d != ".bin");
 
 function ignoreNodeModules(context, request, callback){
+    if(request[0] == ".")
+    	return callback();
+    	
+    const module = request.split("./")[0];
     
+    if(nodeModules.indexOf(module) !== -1){
+    	return callback(null, "commonjs " + request);
+    }
+    
+    return callback();
 }
 
 function createConfig(isDebug){
