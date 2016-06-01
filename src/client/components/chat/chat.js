@@ -16,4 +16,17 @@ class ChatComponent extends ComponentBase{
 		this._chat = chatStore;
 	}
 	
+	_onAttach(){
+		
+	}
+}
+
+let component;
+
+try {
+	component = new ChatComponent(server, usersStore, chatStore);
+} catch (e){
+	console.error(e);
+} finally {
+	
 }
