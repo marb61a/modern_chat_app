@@ -1,4 +1,24 @@
+$fa-font-path: "~font-awesome/fonts";
+@import "~font-awesome/scss/font-awesome";
 @import "./styles/variables";
+
+::-webkit-scrollbar{
+	height: 5px;
+	width: 5px;
+	background: darken($background, 3%);
+}
+
+::-webkit-scrollbar-corner {
+	background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: $color-information;
+	
+	&:hover {
+		background: lighten($color-information, 20%);
+	}
+}
 
 html, body{
     height: 100%;
