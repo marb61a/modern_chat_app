@@ -40,5 +40,47 @@ function prodClientBuild(callback){
 const devServerWebpack = webpack(createServerConfig(true));
 const prodServerWebpack = webpack(createServerConfig(false));
 
+function devServerBuild(callback){
+	devServerWebpack.run((error, stats) => {
+		outputWebpack("Dev : Server", error, stats);
+		callback();
+	});
+}
+
+function devServerWatch() {
+	devServerWebpack.watch({}, (error, stats) => {
+		outputWebpack("Dev:Server", error, stats);
+	});
+}
+
+function devServerReload(){
+	return $.nodemon({
+		script: "./build/server.js",
+		watch: "./build",
+		env: {
+			"NODE_ENV": "development",
+			"USE_WEBPACK": "true"
+		}
+	});
+}
+
+function prodServerBuild(callback){
+	prodServerWebpack.run((error, stats) => {
+		outputWebpack("Prod:Server", error, stats);
+		callback();
+	});
+}
+
 
 // Helpers
+function outputWebpack(label, error, stats){
+	if (error)
+		throw new Error(error);
+	
+	if(stats.hasErrors()){
+		$.util.log(stats.toString({colors : true}));
+	} else {
+		const time = stats.endTime - stats.startTime;
+		$.util.log(chalk.bgGreen(`Built ${label} in ${time} ms`));
+	}
+}
