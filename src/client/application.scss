@@ -33,6 +33,44 @@ body{
 	font-family: Arial, Helvetica, sans-serif;
 }
 
+.site-wrap{
+	height: 100%;
+	display : flex;
+	border-bottom: 5px solid $border-panel;
+	box-sizing: border-box;
+	
+	> .column{
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+		
+		&.left{
+			width: 200px;
+			flex-shrink: 0;
+			flex-grow: 0;
+			
+			> section{
+				border-right: 5px solid $border-panel;
+			}
+		}
+		
+		&.right {
+			width: 200px;
+			flex-shrink: 0;
+			flex-grow: 0;
+			
+			> section {
+				border-left: 5px solid $border-panel;
+			}
+		}
+		
+		&.center {
+			flex-grow: 1;
+		}
+	}
+	
+}
+
 .column > section {
 	background: $background-panel;
 	flex-grow: 1;
