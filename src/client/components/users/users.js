@@ -1,5 +1,6 @@
 import $ from "jquery";
 import {ElementComponent} from "../../lib/component";
+import {usersStore} from "../../services";
 import "./users.scss";
 
 class UsersComponent extends ElementComponent {
@@ -17,9 +18,12 @@ class UsersComponent extends ElementComponent {
 let component;
 
 try{
-    
+    component = new UsersComponent(usersStore);
+    component.attach($("section.users"))
 }catch(e){
-    
+    console.error(e);
+	if (component)
+		component.detach();
 }finally{
     
 }
