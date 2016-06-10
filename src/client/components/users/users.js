@@ -19,7 +19,7 @@ let component;
 
 try{
     component = new UsersComponent(usersStore);
-    component.attach($("section.users"))
+    component.attach($("section.users"));
 }catch(e){
     console.error(e);
 	if (component)
