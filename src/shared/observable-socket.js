@@ -16,5 +16,24 @@ export function success() {
 }
 
 export class ObservableSocket {
+    get isConnected(){
+    	return this._state.isConnected;
+    }
     
+    get isConnecting(){
+    	return this._state.isConnecting;
+    }
+    
+    get isTotallyDead(){
+    	return !this.isConnected && !this.isConnecting;
+    }
+    
+    constructor(socket){
+    	this._socket = socket;
+    	this._state = {};
+    	this._actionCallbacks = {};
+		this._requests = {};
+		this._nextRequestId = 0;
+		
+    }
 }
