@@ -1,0 +1,26 @@
+@import "../../styles/variables";
+
+section.playlist {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    
+    > h1 {
+        border: none;
+    }
+    
+    .chrome {
+        overflow: hidden;
+        flex-grow: 1;
+		display: flex;
+		position: relative;
+		
+		> .scroll-area {
+			position: relative;
+			flex-grow: 1;
+			display: flex;
+			flex-direction: column;
+			overflow-y: scroll;
+		}
+    }
+}
