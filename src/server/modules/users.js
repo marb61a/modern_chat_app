@@ -2,7 +2,6 @@ import _ from "lodash";
 import {Observable} from "rxjs";
 import {ModuleBase} from "../lib/module";
 
-import {ModuleBase} from "../lib/module";
 import {validateLogin} from "shared/validation/users";
 import {fail} from "shared/observable-socket";
 
@@ -18,6 +17,21 @@ export class UsersModule extends ModuleBase{
     
     loginClient$(client, username){
         username = username.trim();
+        const validator = validateLogin(username);
+        if(!validator.isValid)
+            return validator.throw$();
+            
+        if (this._users.hasOwnProperty(username))
+			return fail(`Username ${username} is already taken`);
+		
+		const auth = client[AuthContext] || (client[AuthContext] = {});
+		
+		if (auth.isLoggedIn)
+			return fail("You are already logged in");
+		
+		auth.name = username;
+		auth.color = this.getColorForUsername(username);
+		auth.isLoggedIn = true;
     }
     
     logoutClient(client){
