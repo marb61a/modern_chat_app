@@ -1,0 +1,10 @@
+@import "../../styles/variables";
+
+section.chat {
+    align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: $background;
+	flex-grow: 1;
+}
