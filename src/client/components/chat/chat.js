@@ -25,8 +25,14 @@ let component;
 
 try {
 	component = new ChatComponent(server, usersStore, chatStore);
+	component.attach($("section.chat"));
 } catch (e){
 	console.error(e);
+	if (component)
+		component.detach();
 } finally {
-	
+	if (module.hot) {
+		module.hot.accept();
+		module.hot.dispose(() => component && component.detach());
+	}
 }
