@@ -7,4 +7,25 @@ section.chat {
 	overflow: hidden;
 	background: $background;
 	flex-grow: 1;
+	
+	ul.chat-massages {
+		align-self: stretch;
+		flex-grow: 1;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		overflow-y: auto;
+		position: relative;
+		z-index: 1;
+		
+		> li {
+			display: flex;
+			border-top: 1px solid $background;
+		}
+	}
+	
+	.chat-form {
+		position: relative;
+		
+	}
 }
