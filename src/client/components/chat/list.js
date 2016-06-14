@@ -18,3 +18,30 @@ export class ChatListComponent extends ElementComponent{
         Observable.merge();
     }
 } 
+
+function serverStatusFactory({isConnected, isReconnecting, attempt}){
+    let statusMessage = null;
+    if(isConnected)
+        statusMessage = "Connected";
+    
+    if (statusMessage == null)
+		return null;
+}
+
+function userActionFactory({type, user}){
+    if(type !== "add" && type !== "remove")
+        return null
+    
+    return $(`<li class="user-action ${type}" />`)
+        .append([
+    
+        ]);
+}
+
+function chatMessageFactory({user, message, type, time}){
+    return $(`<li class="message ${type}" />`)
+        .data("user", user.name)
+        .append([
+            
+        ]);
+}
