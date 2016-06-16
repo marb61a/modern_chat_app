@@ -27,5 +27,26 @@ section.chat {
 	.chat-form {
 		position: relative;
 		
+		.chat-error {
+			opacity: .8;
+			background: $background;
+			color: $color-danger;
+			padding: 5px;
+		}
+		
+		input {
+			outline: none;
+			box-sizing: border-box;
+			background: $background;
+			padding: 10px;
+			border: none;
+			border-top: 5px solid $border-panel;
+			width: 100%;
+			color: #fff;
+			
+			&:active, &:focus {
+				background: darken($background, 3%);
+			}
+		}
 	}
 }

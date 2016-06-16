@@ -15,10 +15,19 @@ export class ChatFormComponent extends ElementComponent {
     }
     
     _sendMessage$(message){
-        
+        return this._chat.sendMessage$(message).catchWrap().do(
+            () => this._$input.val("")
+        );
     }
     
     _login$(username){
-        
+        this._$input.attr("disabled", "disabled");
+        return this._users.login$(username).catchWrap()
+        .do( () => this._$input.val("") )
+        .finally(
+            () => {
+            this.$input.attr("diasbled", null);
+            this.$input.focus();
+        });
     }
 }
