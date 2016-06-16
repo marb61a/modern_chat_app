@@ -7,7 +7,14 @@ import {PlaylistSortComponent} from "./sort";
 export class PlaylistListComponent extends ElementComponent{
     constructor(playlistStore, usersStore){
         super("ul");
-        
+        this._playlist = playlistStore;
+		this._users = usersStore;
+		this.$element.addClass("playlist-list");
+    }
+    
+    _onAttach(){
+        const $list = this.$element;
+		let itemsMap = {};
     }
     
 }
@@ -20,5 +27,6 @@ class PlaylistItemComponent extends ElementComponent{
 	
     constructor(source){
         super("li");
+        this._source = source;
     }
 }
