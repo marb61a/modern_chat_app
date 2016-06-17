@@ -22,6 +22,34 @@ export class UsersStore {
 			this._server.on$("users:removed").map(opRemove)
         );
         
+        this.state$ = events$
+            .scan(({state}, op) => op(state), {
+                state: defaultStore
+            })
+            .publishReplay(1);
+        
+        this.state$.connect();
+        
+        //Authentication
+        this.currentUser$ = Observable.merge(
+            this._server.on$("auth:login"),
+			this._server.on$("auth:logout").mapTo({})
+        )
+        .startWith({})
+        .publishReplay(1)
+        .refCount();
+        
+        // Bootstrap
+		this._server.on("connect", () => {
+			this._server.emit("users:list");
+			
+			if (!this.isLoggedIn)
+				return;
+				
+			this.login$(this._currentUser.name).subscribe(
+				user => console.log(`Logged in again as ${user.name}`),
+				error => alert(`Could not log back in ${error.message || "Unknown Error"}`));
+		});
     }
         
     login$(name){
