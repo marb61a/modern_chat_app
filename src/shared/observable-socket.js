@@ -62,5 +62,37 @@ export class ObservableSocket {
 		return Observable.fromEvent(this._socket, event);
 	}
 	
+	on(event, callback) {
+		this._socket.on(event, callback);
+	}
 	
+	off(event, callback) {
+		this._socket.off(event, callback);
+	}
+
+	emit(event, arg) {
+		this._socket.emit(event, arg);
+	}
+	
+	// Client Side Emit
+	emitAction$(action, arg) {
+		const id = this._nextRequestId++;
+		this._registerCallbacks(action);
+		const subject = this._requests[id] = new ReplaySubject(1);
+		this._socket.emit(action, arg, id);
+		return subject;
+	}
+	
+	_registerCallbacks(action){
+		if(this._actionCallbacks.hasOwnProperty(action))
+			return;
+		
+		this._socket.on(action, (arg, id) => {
+			const request = this._popRequest(id);
+			if (!request)
+				return;
+			request.next(arg);
+			request.complete();
+		});
+	}
 }
