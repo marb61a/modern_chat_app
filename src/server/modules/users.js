@@ -15,6 +15,18 @@ export class UsersModule extends ModuleBase{
 		this._users = {};
     }
     
+    getColorForUsername(username){
+        
+    }
+    
+    getUserForClient(client){
+        const auth = client[AuthContext];
+        if (!auth)
+			return null;
+		
+		return auth.isLoggedIn ? auth : null;
+    }
+    
     loginClient$(client, username){
         username = username.trim();
         const validator = validateLogin(username);
@@ -35,7 +47,17 @@ export class UsersModule extends ModuleBase{
     }
     
     logoutClient(client){
+        const auth = this.getUserForClient(client);
+        if(!auth)
+            return;
         
+        const index = this._userList.indexOf(auth);
+        this._userList.splice(index, 1);
+        delete this._users[auth.name];
+        delete client[AuthContext];
+        
+        this._io.emit("users:removed", auth);
+        console.log(`User ${auth.name} logged out`);
     }
     
     registerClient(client){
