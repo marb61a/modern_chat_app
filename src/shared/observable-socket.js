@@ -91,8 +91,32 @@ export class ObservableSocket {
 			const request = this._popRequest(id);
 			if (!request)
 				return;
+				
 			request.next(arg);
 			request.complete();
 		});
+		
+		this._socket.on(`${action}:fail`, (arg,id) => {
+			const request = this._popRequest(id);
+			if (!request)
+				return;
+				
+			request.error(arg);
+		});
+		
+		this._actionCallbacks[action] = true;
 	}
+	
+	_popRequest(id){
+		if(!this._requests.hasOwnProperty(id)){
+			console.error(`An event with the id ${id} was returned twice, or the server did not return an ID!`);
+			return;
+		}
+		
+		const request = this._requests[id];
+		delete this._requests[id];
+		return request;
+	}
+	
+	
 }
