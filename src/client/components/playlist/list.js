@@ -35,6 +35,30 @@ export class PlaylistListComponent extends ElementComponent{
 					comp.attach($list);
 		        }
 		    });
+		    
+		this._playlist.actions$
+			.filter(a => a.type === "add")
+			.compSubscribe(this, ({source, addAfter}) => {
+				const comp = new PlaylistItemComponent(source);
+				comp.attach($list);
+				itemsMap[source.id] = comp;
+				this._addItem(comp, addAfter ? itemsMap[addAfter.id] : null);
+			});
+			
+		this._playlist.actions$
+			.filter(a => a.type === "remove")
+			.compSubscribe(this, ({source}) => {
+				const comp = itemsMap[source.id];
+				this._removeItem(comp);
+			});
+			
+		this._playlist.actions$
+			.filter(a => a.type === "move")
+			.compSubscribe(this, ({fromSource, toSource}) => {
+				const fromComp = itemsMap[fromSource.id];
+				const toComp = toSource ? itemsMap[toSource.id] : null;
+				this._moveItem(fromComp, toComp);
+			});
     }
 }
 
