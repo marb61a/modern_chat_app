@@ -1,7 +1,7 @@
 import _ from "lodash";
 import {Observable} from "rxjs";
-import {ModuleBase} from "../lib/module";
 
+import {ModuleBase} from "../lib/module";
 import {validateLogin} from "shared/validation/users";
 import {fail} from "shared/observable-socket";
 
@@ -16,7 +16,15 @@ export class UsersModule extends ModuleBase{
     }
     
     getColorForUsername(username){
-        
+       let hash = _.reduce(username,
+			(hash, ch) => ch.charCodeAt(0) + (hash << 6) + (hash << 16) - hash, 0); 
+			
+		hash = Math.abs(hash);
+		const hue = hash % 360,
+			saturation = hash % 25 + 70,
+			lightness = 100 - (hash % 15 + 35);
+			
+		return `hsl(${hue}, ${saturation}%, ${lightness}%)`; 
     }
     
     getUserForClient(client){
@@ -44,6 +52,13 @@ export class UsersModule extends ModuleBase{
 		auth.name = username;
 		auth.color = this.getColorForUsername(username);
 		auth.isLoggedIn = true;
+		
+		this._users[username] = client;
+		this._userList.push(auth);
+		
+		this._io.emit("users:added", auth);
+		console.log(`User ${username} logged in`);
+		return Observable.of(auth);
     }
     
     logoutClient(client){
