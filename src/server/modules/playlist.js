@@ -2,6 +2,7 @@ import {Observable} from "rxjs";
 import _ from "lodash";
 
 import {ModuleBase} from "../lib/module";
+
 import {fail} from "shared/observable-socket";
 import {validateAddSource} from "shared/validation/playlist";
 
@@ -52,5 +53,28 @@ export class PlayListModule extends ModuleBase{
 			this._currentSource = source;
 			this._currentIndex = newIndex;
     	}
+    	
+    	this._io.emit("playlist:current", this._createCurrentEvent);
+    	console.log(`playlist: setting current to ${source ? source.title : "{nothing}"}`);
+    }
+    
+    playNextSource(){
+        if(!this._playlist.length){
+            this.setCurrentSource(null);
+            return;
+        }
+        
+        if(this._currentIndex + 1 >= this._playlist.length)
+            this.setCurrentSource(this._playlist[0]);
+        else
+            this.setCurrentSource(this._playlist[this._currentIndex + 1]);
+    }
+    
+    addSourceFromUrl$(url){
+        const validator = validateAddSource(url);
+        if (!validator.isValid)
+			return validator.throw$();
+		
+		return new Observable();
     }
 }
