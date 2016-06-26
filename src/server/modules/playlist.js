@@ -75,6 +75,39 @@ export class PlayListModule extends ModuleBase{
         if (!validator.isValid)
 			return validator.throw$();
 		
-		return new Observable();
+		return new Observable(observer => {
+		    let getSource$ = null;
+		    for(let service of this._services){
+		        getSource$ = service.process$(url);
+		        if(getSource$)
+		            break;
+		    }
+		    
+		    if(!getSource$)
+		        return fail(`No service accepted url ${url}`);
+		    
+		    getSource$
+		        .do(source => this.addSource(source))
+		        .subscribe(observer);
+		});
+    }
+    
+    addSource(source){
+        source.id = this._nextSourceId++;
+        let insertIndex = 0,
+            afterId = -1;
+        
+        if(this._currentSource){
+            afterId = this._currentSource.id;
+            insertIndex = this._currentIndex + 1;
+        }
+        
+        this._playlist.splice(insertIndex, 0, source);
+        this._io.emit("playlist:added", {source, afterId});
+        
+        if(!this._currentSource)
+            this.setCurrentSource(source);
+        
+        console.log(`playlist: added ${source.title}`);
     }
 }
