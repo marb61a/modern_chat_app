@@ -1,4 +1,5 @@
 import $ from "jquery";
+import {Observable} from "rxjs";
 
 import {ElementComponent} from "../../lib/component";
 

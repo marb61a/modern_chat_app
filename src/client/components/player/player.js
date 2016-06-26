@@ -3,8 +3,6 @@ import _ from "lodash";
 import {Observable} from "rxjs";
 import {ElementComponent} from "../../lib/component";
 
-import {ElementComponent} from "../../lib/component";
-
 import "./player.scss";
 
 import {playlistStore} from "../../services";
@@ -35,6 +33,22 @@ class PlayerComponent extends ElementComponent{
         Observable.merge(...initList)
             .toArray()
             .compSubscribe(this, this._playersAttached.bind(this));
+        
+        this._playlist.serverTime$
+            .compSubscribe(this, ({ source }) => {
+                if(!source)
+                    return;
+                
+                $title.text(source.title);
+            });
+     }
+     
+     _playersAttached(){
+        let lastSource = null,
+            lastPlayer = null; 
+        
+        this._playlist.serverTime$
+            .compSubscribe();
      }
     
 }
