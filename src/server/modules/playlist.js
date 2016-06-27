@@ -110,4 +110,31 @@ export class PlayListModule extends ModuleBase{
         
         console.log(`playlist: added ${source.title}`);
     }
+    
+    _tickUpdateTime(){
+        if (this._currentSource == null) {
+            if(this._playlist.length)
+                this.setCurrentSource(this._playlist[0]);
+        } else {
+            this._currentTime++;
+            if(this._currentTime > this._currentSource.totalTime + 2)
+                this.playNextSource();
+        }
+    }
+    
+    _tickUpdateClients(){
+        this._io.emit("playlist:current", this.createCurrentEvent());
+    }
+    
+    _createCurrentEvent(){
+        return this._currentSource 
+        ?
+        {
+            id: this._currentSource.id,
+			time: this._currentTime
+        } : {
+            id: null,
+			time: 0
+        };
+    }
 }
