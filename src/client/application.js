@@ -17,6 +17,16 @@ services.server
     	});
 
 // Auth
+const $html = $("html");
+services.usersStore.currentUser$.subscribe(user => {
+        if(user.isLoggedIn){
+                $html.removeClass("not-logged-in");
+		$html.addClass("logged-in");
+        } else {
+                $html.addClass("not-logged-in");
+		$html.removeClass("logged-in");
+        }        
+});
 
 // Components
 require("./components/player/player");

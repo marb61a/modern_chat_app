@@ -78,12 +78,32 @@ function opList(users){
 
 function opAdd(user){
     return state => {
+        let insertIndex = _.findIndex(state.users,
+                            u => u.name.localeCompare(user.name) > 0);
+                            
+        if(insertIndex === -1)
+            insertIndex = state.users.length;
         
+        state.users.splice(insertIndex, 0, user);
+        return{
+            type: "add",
+			user: user,
+			state: state
+        };
     };
 }
 
 function opRemove(user){
     return state => {
-        
+        const index = _.findIndex(state.users, { name: user.name });
+		if (index !== -1) {
+			state.users.splice(index, 1);
+		}
+		
+		return {
+			type: "remove",
+			user: user,
+			state: state
+		};
     };
 }
