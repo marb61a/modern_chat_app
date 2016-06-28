@@ -18,5 +18,15 @@ export class PlaylistSortComponent extends ComponentBase {
                                 .appendTo(this._$mount);
         
         const startDrag$ = Observable.fromEvent(this._$list, "mousedown")
+            .filter(() => this._users.isLoggedIn)
+            .filter(e => $(e.target).hasClass("thumb"))
+            .do(e => e.preventDefault());
+        
+        const endDrag$ = Observable.fromEvent(this._$body, "mouseup");
+        const mouseMove$ = Observable.fromEvent(this._$body, "mousemove");
+        
+        const sortOperations$ = startDrag$
+            .flatMap()
+            .flatMap();
     }
 }
