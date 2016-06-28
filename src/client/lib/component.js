@@ -1,11 +1,31 @@
 import $ from "jquery";
 
+import {Observable} from "rxjs";
+
+Observable.prototype.compSubscribe = function(component, ...args) {
+    let subscription = this.safeSubscribe(...args);
+    component._onDetachHandlers.push(() => subscription.unsubscribe());
+    return subscription;
+};
+
 export class ComponentBase{
     attach($mount){
         this._$mount = $mount;
 		this._onDetachHandlers = [];
 		this.children = [];
 		this._onAttach();
+    }
+    
+    detach(){
+        this._onDetach();
+        for (let handler of this._onDetachHandlers)
+			handler();
+			
+		for (let child of this.children)
+			child.detach();
+			
+		this._onDetachHandlers = [];
+		this.children = [];
     }
     
     _onAttach() {
