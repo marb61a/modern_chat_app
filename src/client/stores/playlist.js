@@ -25,8 +25,25 @@ export class PlaylistStore {
             )
             .publish();
         
-        const publishState$ = this.actions$.publishReplay(1);
+        const publishedState$ = this.actions$.publishReplay(1);
+        this.state$ = publishedState$
+                        .startWith({state:defaultState});
         
+        this.serverTime$ = this.actions$
+                            .filter(a => a.type == "current")
+                            .map(a => a.state.current)
+                            .publishReplay(1);
+        
+        this.actions$.connect();
+        this.serverTime$.connect();
+		publishedState$.connect();
+		
+		server.on("connect", () => {
+		    server.emitAction$("playlist:list")
+    				.subscribe(() => {
+    					server.emit("playlist:current");
+    				});
+		});
     }
     
     addSource$(url){
@@ -35,6 +52,21 @@ export class PlaylistStore {
 			return Observable.throw({ message: validator.message });
 
 		return this._server.emitAction$("playlist:add", { url });
+    }
+    
+    setCurrentSource$(source){
+        return this._server.emitAction$("playlist:set-current", { id: source.id });
+    }
+    
+    deleteSource$(source){
+        return this._server.emitAction$("playlist:remove", { id: source.id });
+    }
+    
+    moveSource$(fromId, toId){
+        if(fromId == toId)
+            return Observable.empty();
+        
+        return this._server.emitAction$("playlist:move", {fromId, toId});
     }
 }
 
