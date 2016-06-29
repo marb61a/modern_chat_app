@@ -72,13 +72,43 @@ export class PlaylistStore {
 
 function opList(sources){
     return state => {
+        state.current = null;
+        state.list = sources;
+        state.map = sources.reduce((map, source) => {
+            map[source.id] = source;
+            return map;
+        }, {});
         
+        return {
+            type: "list",
+			state: state
+        };
     };
 }
 
-function opAdd(){
+function opAdd({source, afterId}){
     return state => {
+        let insertIndex = 0,
+            addAfter = null;
         
+        if(afterId !== -1){
+            addAfter = state.map[afterId];
+            if(!addAfter)
+                return opError(state, `Could not add source ${source.title} after ${afterId}, as ${afterId} was not found`);
+            
+            const afterIndex = state.list.indexOf(addAfter);
+            insertIndex = afterIndex + 1;
+        }
+        
+        state.list.splice(insertIndex, 0, source);
+        state.map[source.id] = source;
+        
+        return {
+			type: "add",
+			source: source,
+			addAfter: addAfter,
+			state: state
+		};
     };
 }
 
