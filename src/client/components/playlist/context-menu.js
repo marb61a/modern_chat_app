@@ -14,6 +14,34 @@ export class PlaylistContextMenuComponent extends ElementComponent{
     }
     
     _onAttach(){
+        const $playButton = $(`
+            <a href="#" class="play">
+				<i class="fa fa-play-circle" /> Play
+			</a>
+        `).appendTo(this.$element);
         
+        const $deleteButton = $(`
+            <a href="#" class="delete">
+                <i class="fa fa-trash" /> Delete
+            </a>
+        `).appendTo(this.$element);
+        
+        const selectedItemSubject$ = new Subject();
+        
+        const openMenuOnItem$ = Observable.fromEventNoDefault(this._$list, "contextmenu")
+            .map(event => $(event.target).closest("li").data("component"));
+        
+        const closeMenu$ = Observable.fromEvent($("body"), "mouseup")
+			.filter(event => $(event.target).closest("li.selected, .context-menu").length == 0)
+			.mapTo(null);
+			
+		const selectedItem$ = Observable.merge(openMenuOnItem$, closeMenu$, selectedItemSubject$)
+			.filter(() => this._users.isLoggedIn)
+			.share();
+            
+        let lastItem = null;
+        
+        selectedItem$
+            .compSubscribe();
     }
 }
