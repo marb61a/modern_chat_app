@@ -59,6 +59,27 @@ export class PlaylistListComponent extends ElementComponent{
 				const toComp = toSource ? itemsMap[toSource.id] : null;
 				this._moveItem(fromComp, toComp);
 			});
+			
+		// Current Item
+		let lastComp = null;
+		this._playlist.serverTime$
+			.compSubscribe(this, current => {
+				if(current.source == null){
+					if(lastComp != null){
+						lastComp.isPlaying = false;
+						lastComp = null;
+					}
+					
+					return;
+				}
+				
+				const currentComp = itemsMap[current.source.id];
+				if(currentComp == null){
+					console.error(`Cannot find component for ${current.source.id} / ${current.source.title}`);
+					return;
+				}
+				
+			});
     }
 }
 
