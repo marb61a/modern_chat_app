@@ -107,6 +107,7 @@ section.playlist .context-menu {
 	}
 }
 
+
 // Sorting
 section.playlist .scroll-area .placeholder {
 	background: lighten($border-panel, 20%);
@@ -134,5 +135,37 @@ html.sorting-playlist {
 	
 	section.playlist .playlist-list > li {
 		cursor: ns-resize;
+	}
+}
+
+
+// Playlist Items
+@mixin thumbnail-size($width) {
+	$thumb-aspect: .75;
+	width: $width;
+	height: $thumb-aspect * $width;
+}
+
+html.logged-in section-playlist .playlist-list > li {
+	.thumb-wrapper img {
+		cursor: ns-resize;
+	}
+}
+
+html:not(.sorting-playlist) section.playlist .playlist-list > li:hover:not(.selected) {
+	background: $border-panel;
+	
+	> .inner {
+		img {
+			@include thumbnail-size(60px);
+			top: -5px;
+			left: -5px;
+			opacity: 1;
+			border: none;
+		}
+		
+		.details {
+			margin-left: 20px;
+		}
 	}
 }
