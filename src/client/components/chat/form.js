@@ -12,7 +12,31 @@ export class ChatFormComponent extends ElementComponent {
     }
     
     _onAttach(){
+        this._$error = $(`<div class="chat-error"/>`).aooendTo(this.$element);
+        this._$input = $(`<input type="text" class="chat-input" />`).appendTo(this.$element);
         
+        this._users.currentUser$.compSubscribe(this, user => {
+            this._$input.attr("placeholder", user.isLoggedIn ? "" : "Enter a username");
+        });
+        
+        Observable.fromEvent(this._$input, "keydown")
+            // Get the value
+            .filter(e => e.keyCode === 13) // 13 is the keycode for enter
+            .do(e => e.preventDefault())
+            .map(e => e.target.value.trim())
+			.filter(e => e.length)
+			// Login or Send a Message
+			.withLatestFrom(this._users.currentUser$)
+			.flatMap(([value, user]) => {
+			    return user.isLoggedIn ? this._sendMessage$(value) : this._login$(value);
+			})
+			// Display the message
+			.compSubscribe(this, response => {
+				if (response && response.error)
+					this._$error.show().text(response.error.message);
+				else
+					this._$error.hide();
+			});
     }
     
     _sendMessage$(message){
