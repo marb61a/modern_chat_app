@@ -162,4 +162,26 @@ export class PlayListModule extends ModuleBase{
 		this._io.emit("playlist:moved", { fromId, toId });
 		console.log(`playlist: moved ${fromSource.title} to ${toSource ? `to after ${toSource.title}` : "to the beginning"}`);
     }
+    
+    deleteSourceById(id){
+        const source = this.getSourceById(id);
+        if(!source)
+            throw new Error(`Cannot find source ${id}`);
+            
+        const sourceIndex = this._playlist.indexOf(source);
+        
+        if(source == this._currentSource)
+            if (this._playlist.length == 1)
+				this.setCurrentSource(null);
+			else
+				this.playNextSource();
+		
+		this._playlist.splice(sourceIndex, 1);
+		
+		if(this._currentSource)
+		    this._currentIndex = this._playlist.indexOf(this._currentSource);
+		
+		this._io.emit("playlist:removed", {id});
+		console.log(`playlist: deleted ${source.title}`);
+    }
 }
