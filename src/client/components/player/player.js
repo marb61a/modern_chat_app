@@ -48,7 +48,30 @@ class PlayerComponent extends ElementComponent{
             lastPlayer = null; 
         
         this._playlist.serverTime$
-            .compSubscribe();
+            .compSubscribe(this, ({source, time}) => {
+                if(!source){
+                    if(lastSource){
+                        lastPlayer.stop();
+                        lastPlayer = lastSource = null;
+                    }
+                    
+                    return;
+                }
+                
+                const player = this._players[source.type];
+                if(source != lastSource){
+                    if (lastPlayer && player != lastPlayer) {
+						lastPlayer.stop();
+					}
+					
+					lastSource = source;
+					lastPlayer = player;
+					player.play(source, time);
+                }
+                
+                else if (Math.abs(time - player.currentTime) > 2)
+					player.seek(time);
+            });
      }
     
 }
