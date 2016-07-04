@@ -26,7 +26,27 @@ export class PlaylistSortComponent extends ComponentBase {
         const mouseMove$ = Observable.fromEvent(this._$body, "mousemove");
         
         const sortOperations$ = startDrag$
-            .flatMap()
-            .flatMap();
+            .flatMap(startEvent => {
+                const $fromElement = $(startEvent.target).closest("li");
+                const fromComp = $fromElement.data("component");
+                
+                this._$html.addClass("sorting-playlist");
+				$fromElement.addClass("dragging");
+				$placeholder.text(fromComp.source.title);
+				
+				const halfPlaceholderHeight = $placeholder[0].offsetHeight / 2;
+				const halfItemHeight = this._$list[0].firstChild.offsetHeight / 2;
+				let target = {
+					from: fromComp,
+					to: null
+				};
+            })
+            .flatMap(({from, to}) => 
+                    this._playlist.moveSource$(from.source.id, to && to.source.id).catchWrap());
+            
+            sortOperations$.compSubscribe(this, result => {
+                if(result && result.error)
+                    alert(result.error.message || "Unknown Error");
+            });
     }
 }
