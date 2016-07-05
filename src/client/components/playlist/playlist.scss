@@ -169,3 +169,51 @@ html:not(.sorting-playlist) section.playlist .playlist-list > li:hover:not(.sele
 		}
 	}
 }
+
+section.playlist .playlist-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	flex-grow: 1;
+	min-height: 100%;
+	
+	> li {
+		transition:
+			background 250ms linear,
+			color 250ms linear,
+			box-shadow 100ms linear,
+			transform 500ms;
+			
+		padding: 0;
+		cursor: default;
+		display: inline-block;
+		width: 100%;
+		
+		> .inner {
+			margin: 5px;
+			padding-bottom: 5px;
+			position: relative;
+			display: flex;
+			
+			.thumb-wrapper {
+				@include thumbnail-size(30px);
+				margin-right: 10px;
+				position: relative;
+				flex-grow: 0;
+				flex-shrink: 0;
+				
+				img {
+					@include thumbnail-size(30px);
+					position: absolute;
+					top: 0;
+					left: 0;
+					border: 2px solid $background;
+					opacity: .5;
+					display: block;
+				}
+			}
+			
+			
+		}
+	}
+}
