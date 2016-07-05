@@ -40,6 +40,32 @@ export class PlaylistSortComponent extends ComponentBase {
 					from: fromComp,
 					to: null
 				};
+				
+				return mouseMove$
+					.startWith(startEvent)
+					.map(e => {
+					    const $element = $(document.elementFromPoint(e.clientX, e.clientY - halfItemHeight));
+						return $element && $element.closest("li");
+					})
+					.map($element => {
+					    const toComp = $element && $element.data("component");
+						if (target.to == toComp)
+							return target;
+						
+						target.to = toComp;
+						const placeholderPosition = toComp
+							? (toComp.$element[0].offsetTop + toComp.$element[0].offsetHeight) - halfPlaceholderHeight
+							: -halfPlaceholderHeight;
+							
+						$placeholder.css("top", placeholderPosition);
+						return target;
+					})
+					.takeUntil(endDrag$)
+					.last()
+					.do(() => {
+						$fromElement.removeClass("dragging");
+						this._$html.removeClass("sorting-playlist");
+					});
             })
             .flatMap(({from, to}) => 
                     this._playlist.moveSource$(from.source.id, to && to.source.id).catchWrap());
