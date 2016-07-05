@@ -42,6 +42,29 @@ export class PlaylistContextMenuComponent extends ElementComponent{
         let lastItem = null;
         
         selectedItem$
-            .compSubscribe();
+            .compSubscribe(this, item => {
+                if(lastItem)
+                    lastItem.isSelected = false;
+                
+                lastItem = item;
+                item.isSelected = true;
+				this.$element.addClass("open");
+				
+				const contextMenuHeight = this.$element.outerHeight();
+				const itemHeight = item.$element.outerHeight();
+				const itemPosition = item.$element[0].offsetTop;
+				
+				const targetPosition = itemPosition + itemHeight + contextMenuHeight > this._$list[0].scrollHeight
+					? itemPosition - contextMenuHeight
+					: itemPosition + itemHeight;
+					
+				this.$element.css("top", targetPosition);
+            });
+            
+            const setCurrentItem$ = Observable.fromEventNoDefault($playButton, "click")
+    			.map(() => comp => this._playlist.setCurrentSource$(comp.source));
+    			
+    		const deleteItem$ = Observable.fromEventNoDefault($deleteButton, "click")
+    			.map(() => comp => this._playlist.deleteSource$(comp.source));
     }
 }
