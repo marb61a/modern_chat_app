@@ -19,9 +19,25 @@ export class YoutubePlayer extends ElementComponent{
 	    return new Observable(observer => {
 	    	window.onYoutubeIframeAPIReady = () => {
 	    		this._player = new window.YT.Player($playerElement[0], {
-	    			
+	    			width: "100%",
+					height: "100%",
+					videoId: "",
+					playerVars: {
+						disablekb: 1,
+						enablejsapi: 1,
+						modestbranding: 1,
+						iv_load_policy: 3,
+						rel: 0
+					},
+					events: {
+						onReady: () => {
+							observer.complete();
+						}
+					}
 	    		});		
 	    	};
+	    	
+	    	$(`<script src="https://www.youtube.com/iframe_api" />`).appendTo($("body"));
 	    });
 	}
 	
