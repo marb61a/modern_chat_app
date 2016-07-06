@@ -112,9 +112,35 @@ function opAdd({source, afterId}){
     };
 }
 
-function opCurrent(){
+function opCurrent({id, time}){
     return state => {
+        if(id == null){
+            state.current = {
+                source : null,
+                time : 0,
+                progress: 0
+            };    
+        } else {
+            const source = state.map[id];
+            if (!source)
+				return opError(state, `Cannot find item with id ${id}`);
+			
+			if(!state.current || state.current.source != source){
+			    state.current = {
+                    source : source,
+                    time : time,
+                    progress: calculateProgress(time, source)
+                };     
+			} else {
+			    state.current.time = time;
+			    state.current.progress = calculateProgress(time, source);
+			}
+        }
         
+        return{
+            type: "current",
+			state: state
+        };
     };
 }
 
@@ -137,4 +163,8 @@ function opError(state, error){
 		error: error,
 		state: state
 	};
+}
+
+function calculateProgress(time, source) {
+	return Math.floor(Math.min(time / source.totalTime, 1) * 100);
 }
