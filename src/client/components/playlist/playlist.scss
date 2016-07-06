@@ -213,7 +213,42 @@ section.playlist .playlist-list {
 				}
 			}
 			
+			.details {
+				align-self: center;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				transition: margin-left 250ms;
+				
+				time {
+					display: block;
+					font-size: 7pt;
+					color: darken($color, 20%);
+					padding-top: 4px;
+				}
+			}
 			
+			.progress {
+				display: none;
+			}
+		}
+		
+		&.remove {
+			transform: translateX(-200%);
+		}
+		
+		&.isPlaying {
+			box-shadow: 0 0 5px 2px #000;
+			background: darken($background-panel, 3%);
+			color: $color-highlight;
+			
+			> .inner {
+				.thumb-wrapper img {
+					opacity: 1;
+					border: 2px solid $color-information;
+				}
+				
+			}
 		}
 	}
 }
