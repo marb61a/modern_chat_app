@@ -94,3 +94,13 @@ function startServer(){
 		console.log(`Started http server on ${port}`);
 	});
 }
+
+Observable.merge(...modules.map(m => m.init$()))
+	.subscribe({
+		complete(){
+			startServer();
+		},
+		error(error) {
+			console.error(`COuld not init module: ${error.stack || error}`);
+		}
+});
