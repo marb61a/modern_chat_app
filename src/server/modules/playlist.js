@@ -184,4 +184,35 @@ export class PlayListModule extends ModuleBase{
 		this._io.emit("playlist:removed", {id});
 		console.log(`playlist: deleted ${source.title}`);
     }
+    
+    registerClient(client){
+        const isLoggedIn = () => this._users.getUserForClient(client) !== null;
+        
+        client.onActions({
+            "playlist:list": () => {
+                return this._playlist;
+            },
+            
+            "playlist:current": () => {
+                return this._createCurrentEvent();
+            },
+            
+            "playlist:add": ({url}) => {
+				if (!isLoggedIn())
+					return fail("You must be logged in to do that");
+
+				return this.addSourceFromUrl$(url);
+			},
+			
+			"playlist:set-current": ({id}) => {
+			    if(!isLoggedIn())
+			        return fail("You must be logged in to do that");
+			    const source = this.getSourceById(id);
+				if (!source)
+					return fail(`Cannot find source ${id}`);
+
+				this.setCurrentSource(source); 
+			}
+        });
+    }
 }
