@@ -31,7 +31,17 @@ export class YoutubeService {
     getSourceFromId$(id){
         return getJson$(this._buildGetVideoUrl(id))
             .flatMap(data => {
+                if(!data || data.items.length != 1)
+                    return fail(`Cannot locate youtube video ${id}`);
                 
+                const {id, snippet, contentDetails} = data.items[0];
+                return Observable.of({
+                    type: "youtube",
+					thumb: snippet.thumbnails.default.url,
+					url: id,
+					title: snippet.title || "{No Title}",
+					totalTime: moment.duration(contentDetails.duration).asSeconds()
+                });
             });
     }
     

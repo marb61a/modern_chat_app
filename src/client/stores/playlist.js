@@ -144,9 +144,21 @@ function opCurrent({id, time}){
     };
 }
 
-function opRemove(){
+function opRemove({id}){
     return state => {
+        const source = state.map[id];
+        if(!source)
+            return opError(state, `Could not remove source with id ${id}, as it was not found`);
         
+        const index = state.list.indexOf(source);
+        state.list.splice(index, 1);
+		delete state.map[id];
+		
+		return {
+			type: "remove",
+			source: source,
+			state: state
+		};
     };
 }
 
