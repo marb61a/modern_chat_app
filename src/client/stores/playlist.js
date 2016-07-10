@@ -19,8 +19,7 @@ export class PlaylistStore {
 			server.on$("playlist:moved").map(opMove));
         
         this.actions$ = events$
-            .scan(
-                ({state}, op) => op(state),
+            .scan(({state}, op) => op(state),
                 {state : defaultState}
             )
             .publish();

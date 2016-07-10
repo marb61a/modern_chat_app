@@ -30,7 +30,20 @@ export class PlaylistChromeComponent extends ComponentBase {
 		let lastSource;
 		this._playlist.state$
 		    .compSubscribe(this, ({state, type}) => {
+		        const source = state.current && state.current.source;
+		        if(!source)
+		        	return;
 		        
+		        if(source == lastSource && type != "move")	
+		        	return;
+		        	
+		        lastSource = source;
+		        const index = state.list.indexOf(source);
+		        const precentage = state.list.length ? index / state.list.length * 100 : 0;
+
+				$indicator.animate({
+					top: `${precentage}%`
+				}, 200);
 		    });
     }
 }

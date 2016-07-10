@@ -47,6 +47,11 @@ export class PlaylistContextMenuComponent extends ElementComponent{
                     lastItem.isSelected = false;
                 
                 lastItem = item;
+                if (!item) {
+					this.$element.removeClass("open");
+					return;
+				}
+				
                 item.isSelected = true;
 				this.$element.addClass("open");
 				
@@ -66,5 +71,15 @@ export class PlaylistContextMenuComponent extends ElementComponent{
     			
     		const deleteItem$ = Observable.fromEventNoDefault($deleteButton, "click")
     			.map(() => comp => this._playlist.deleteSource$(comp.source));
+    		
+    		Observable.merge(selectedItem$, deleteItem$)
+    		    .withLatestFrom(selectedItem$)
+    		    .flatMap(([op, item]) => op(item).catchWrap())
+    		    .compSubscribe(this, response => {
+    		        if (response && response.error)
+    					alert(response.error.message || "Unknown Error");
+    				else
+    					selectedItemSubject$.next(null);
+    		    });
     }
 }
