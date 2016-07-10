@@ -79,6 +79,22 @@ export class PlaylistListComponent extends ElementComponent{
 					return;
 				}
 				
+				if(lastComp != currentComp){
+					if(lastComp != null)
+						lastComp.isPlaying = false;
+					
+					lastComp = currentComp;
+					currentComp.isPlaying = true;
+					
+					const scrollTop = currentComp.$element.offset().top -
+						this.$element.offset().top +
+						this.$element.scrollTop() -
+						currentComp.$element.height() * 2;
+					
+					this._$mount.animate({scrollTop});
+				}
+				
+				currentComp.progress = current.progress;
 			});
     }
 }
@@ -103,5 +119,20 @@ class PlaylistItemComponent extends ElementComponent{
     constructor(source){
         super("li");
         this._source = source;
+        
+        const $thumb = $(`<div class="thumb-wrapper" />`).append(
+			$(`<img class="thumb" />`).attr("src", source.thumb));
+
+		const $details =
+			$(`<div class="details" />`).append([
+				$(`<span class="title" />`).attr("title", source.title).text(source.title),
+				$(`<time />`).text(moment.duration(source.totalTime, "seconds").format())
+			]);
+
+		this._$progress = $(`<span class="progress" />`);
+		this.$element.append($(`<div class="inner" />`).append([
+			$thumb,
+			$details,
+			this._$progress]));
     }
 }
