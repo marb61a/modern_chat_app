@@ -122,6 +122,32 @@ export class PlaylistListComponent extends ElementComponent{
 				comp.detach();
 			});
     }
+    
+    _moveItem(fromComp, toComp){
+    	const fromOffsetTop = fromComp.$element[0].offsetTop;
+    	let distance = 0;
+    	
+    	if(toComp){
+    		const toOffsetTop = toComp.$element[0].offsetTop;
+    		toComp.$element.after(fromComp.$element);
+    		
+    		distance = fromOffsetTop - toOffsetTop;
+    		if(toOffsetTop < fromOffsetTop)
+    			distance = fromComp.$element.height();
+    	} else{
+    		distance = fromOffsetTop;
+    		this.$element.prepend(fromComp.$element);
+    	}
+    	
+    	fromComp.$element
+    		.addClass("moving")
+    		.css({ top: distance })
+    		.animate({top: 0}, 250, () => {
+    			fromComp.$element
+					.removeClass("moving")
+					.css({ top: "" });	
+    		});
+    }
 }
 
 class PlaylistItemComponent extends ElementComponent{
