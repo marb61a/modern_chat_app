@@ -97,6 +97,31 @@ export class PlaylistListComponent extends ElementComponent{
 				currentComp.progress = current.progress;
 			});
     }
+    
+    _addItem(comp, addAfterComp){
+    	if(addAfterComp)
+    		addAfterComp.$element.after(comp.$element);
+    	else
+    		this.$element.prepend(comp.$element);
+    	
+    	const oldHeight = comp.$element.height();
+    	comp.$element
+    		.addClass("selected")
+    		.css({height: 0, opacity: 0 })
+    		.animate({height: oldHeight, opacity: 1}, 250, () => {
+    			comp.$element
+					.removeClass("selected")
+					.css({ height: "", opacity: "" });
+    		});
+    }
+    
+    _removeItem(comp){
+    	comp.$element
+    		.addClass("remove")
+    		.animate({ opacity: 0, height: 0 }, 250, () => {
+				comp.detach();
+			});
+    }
 }
 
 class PlaylistItemComponent extends ElementComponent{
